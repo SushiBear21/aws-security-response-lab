@@ -19,6 +19,12 @@ resource "aws_iam_role_policy" "github_plan_refresh" {
         ]
       },
       {
+        Sid      = "ReadLabTrailStatus"
+        Effect   = "Allow"
+        Action   = "cloudtrail:GetTrailStatus"
+        Resource = "arn:aws:cloudtrail:us-east-1:359769212511:trail/aws-security-response-lab"
+      },
+      {
         Sid      = "DescribeRegionalTrails"
         Effect   = "Allow"
         Action   = "cloudtrail:DescribeTrails"
