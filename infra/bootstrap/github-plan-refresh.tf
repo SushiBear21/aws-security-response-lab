@@ -8,7 +8,10 @@ resource "aws_iam_role_policy" "github_plan_refresh" {
       {
         Sid    = "ReadLabLambdaVersions"
         Effect = "Allow"
-        Action = "lambda:ListVersionsByFunction"
+        Action = [
+          "lambda:ListVersionsByFunction",
+          "lambda:GetFunctionCodeSigningConfig"
+        ]
         Resource = [
           "arn:aws:lambda:us-east-1:359769212511:function:p3-security-detector",
           "arn:aws:lambda:us-east-1:359769212511:function:p3-finding-router",
@@ -33,9 +36,12 @@ resource "aws_iam_role_policy" "github_plan_refresh" {
         Resource = "arn:aws:dynamodb:us-east-1:359769212511:table/p3-response-approvals"
       },
       {
-        Sid      = "CheckEvidenceBucket"
-        Effect   = "Allow"
-        Action   = "s3:ListBucket"
+        Sid    = "CheckEvidenceBucket"
+        Effect = "Allow"
+        Action = [
+          "s3:ListBucket",
+          "s3:GetAccelerateConfiguration"
+        ]
         Resource = "arn:aws:s3:::security-lab-evidence-359769212511-47e2f18084087725c0094ba897"
       }
     ]
