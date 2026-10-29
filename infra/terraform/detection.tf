@@ -62,11 +62,13 @@ resource "aws_lambda_function" "detector" {
       EXPECTED_REGION  = "us-east-1"
       EVIDENCE_BUCKET  = aws_s3_bucket.evidence.id
       TARGET_GROUP_ID  = aws_security_group.target.id
+      EXPECTED_VPC_ID  = aws_vpc.lab.id
     }
   }
 
   depends_on = [
     aws_iam_role_policy.detector,
+    aws_iam_role_policy.investigation,
     aws_cloudwatch_log_group.detector
   ]
 }

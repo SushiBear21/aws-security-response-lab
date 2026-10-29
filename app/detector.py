@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 import boto3
 
 from app.detection import normalize_event, parse_time
+from app.investigate import collect_evidence
 
 
 def utc_now():
@@ -19,6 +20,11 @@ def encode(value):
         allow_nan=False,
         separators=(",", ":"),
     ).encode("utf-8")
+
+
+def elapsed(start, end):
+    value = (parse_time(end) - parse_time(start)).total_seconds()
+    return round(value, 3) if value >= 0 else None
 
 
 def put_json(client, bucket, key, body):
@@ -50,22 +56,34 @@ def lambda_handler(event, context):
             }))
             return {"status": "ignored"}
 
-        incident["received_at"] = received_at
-        incident["detected_at"] = utc_now()
-        incident["request_id"] = context.aws_request_id
-        incident["detector_version"] = "lesson-3"
+        incident.update({
+            "received_at": received_at,
+            "detected_at": utc_now(),
+            "request_id": context.aws_request_id,
+            "detector_version": "lessons-4-5",
+        })
 
-        latency = (
-            parse_time(incident["detected_at"])
-            - parse_time(incident["source_event_time"])
-        ).total_seconds()
-
-        incident["event_to_detection_seconds"] = (
-            round(latency, 3) if latency >= 0 else None
+        incident["event_to_detection_seconds"] = elapsed(
+            incident["source_event_time"],
+            incident["detected_at"],
         )
 
-        # Every delivery attempt has its own evidence directory.
-        # Repeated source events retain the same logical incident ID.
+        stage = "investigation"
+
+        region = os.environ["EXPECTED_REGION"]
+
+        incident.update(collect_evidence(
+            boto3.client("ec2", region_name=region),
+            boto3.client("config", region_name=region),
+            incident["resource_id"],
+            os.environ["EXPECTED_VPC_ID"],
+        ))
+
+        incident["event_to_classification_seconds"] = elapsed(
+            incident["source_event_time"],
+            incident["investigation_completed_at"],
+        )
+
         prefix = (
             f"incidents/{incident['incident_id']}/"
             f"attempts/{context.aws_request_id}"
@@ -84,19 +102,116 @@ def lambda_handler(event, context):
 
         persisted_at = utc_now()
 
+        timeline = [
+            {
+                "time": incident["source_event_time"],
+                "event": "source_authorization",
+            },
+            {"time": received_at, "event": "handler_received"},
+            {
+                "time": incident["detected_at"],
+                "event": "source_event_accepted",
+            },
+            {
+                "time": incident["current_configuration_observed_at"],
+                "event": "current_configuration_observed",
+            },
+            {
+                "time": incident["investigation_completed_at"],
+                "event": "investigation_completed",
+            },
+            {
+                "time": persisted_at,
+                "event": "incident_persisted",
+            },
+        ]
+
+        config_evidence = incident["config_evidence"]
+
+        if config_evidence["status"] == "available":
+            timeline.append({
+                "time": config_evidence["capture_time"],
+                "event": "aws_config_capture",
+            })
+
+        notification = {"status": "not_requested"}
+        topic = os.environ.get("ALERT_TOPIC_ARN", "")
+
+        if topic and incident["severity"] == "HIGH":
+            stage = "notification"
+            publish_started = utc_now()
+
+            alert = {
+                "type": "LAB_CONFIGURATION_ALERT",
+                "incident_id": incident["incident_id"],
+                "classification": incident["classification"],
+                "severity": incident["severity"],
+                "account_id": incident["account_id"],
+                "region": incident["region"],
+                "resource_id": incident["resource_id"],
+                "source_event_time": incident["source_event_time"],
+                "detected_at": incident["detected_at"],
+                "attachment_count_observed":
+                    incident["attachment_count_observed"],
+                "rule_ids": [
+                    rule["SecurityGroupRuleId"]
+                    for rule in incident["public_ssh_rules"]
+                ],
+                "evidence_uri":
+                    f"s3://{bucket}/{prefix}/incident.json",
+                "response_state": "no_response_executed",
+                "next_step":
+                    "Follow the triage runbook and verify lab cleanup.",
+            }
+
+            response = boto3.client(
+                "sns", region_name=region
+            ).publish(
+                TopicArn=topic,
+                Subject="P3 LAB: Public SSH configuration observed",
+                Message=json.dumps(alert, indent=2),
+            )
+
+            published_at = utc_now()
+
+            notification = {
+                "status": "published",
+                "message_id": response["MessageId"],
+                "publish_started_at": publish_started,
+                "published_at": published_at,
+                "persistence_to_publish_seconds":
+                    elapsed(persisted_at, published_at),
+                "detection_to_publish_seconds":
+                    elapsed(incident["detected_at"], published_at),
+            }
+
+            timeline.append({
+                "time": published_at,
+                "event": "sns_publish_succeeded",
+            })
+
+        timeline.sort(key=lambda entry: parse_time(entry["time"]))
+        timeline_bytes = encode(timeline)
+
+        stage = "completion_storage"
+
+        put_json(
+            client, bucket, f"{prefix}/timeline.json", timeline_bytes
+        )
+
         completion = {
             "incident_id": incident["incident_id"],
             "request_id": context.aws_request_id,
             "persisted_at": persisted_at,
+            "completed_at": utc_now(),
             "event_sha256": hashlib.sha256(event_bytes).hexdigest(),
             "incident_sha256": hashlib.sha256(incident_bytes).hexdigest(),
+            "timeline_sha256": hashlib.sha256(timeline_bytes).hexdigest(),
+            "notification": notification,
         }
 
         put_json(
-            client,
-            bucket,
-            f"{prefix}/complete.json",
-            encode(completion),
+            client, bucket, f"{prefix}/complete.json", encode(completion)
         )
 
         print(json.dumps({
@@ -104,8 +219,10 @@ def lambda_handler(event, context):
             "incident_id": incident["incident_id"],
             "request_id": context.aws_request_id,
             "severity": incident["severity"],
-            "event_to_detection_seconds":
-                incident["event_to_detection_seconds"],
+            "classification": incident["classification"],
+            "event_to_classification_seconds":
+                incident["event_to_classification_seconds"],
+            "notification": notification,
             "incident_key": f"{prefix}/incident.json",
         }))
 
