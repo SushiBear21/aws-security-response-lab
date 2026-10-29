@@ -47,7 +47,23 @@ jobs:
 
       - name: Check formatting
         run: terraform -chdir=infra/terraform fmt -check -recursive
+      - name: Show selected OIDC identity claims
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await core.getIDToken("sts.amazonaws.com");
+            const claims = JSON.parse(
+              Buffer.from(token.split(".")[1], "base64url").toString("utf8")
+            );
 
+            core.info(JSON.stringify({
+              issuer: claims.iss,
+              audience: claims.aud,
+              subject: claims.sub,
+              repository: claims.repository,
+              ref: claims.ref,
+              workflow: claims.workflow
+            }, null, 2));
       - name: Obtain temporary planning credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
         with:
