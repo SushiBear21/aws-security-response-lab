@@ -39,8 +39,8 @@ f1e74563-2d96-549d-974c-263ea6ec13c6.
 Both automatic-route evidence sets were downloaded.
 The event.json and finding.json hashes matched their completion manifests.
 
-Inbox receipt has not yet been recorded in this document.
-Successful SNS publication does not establish inbox delivery.
+Both GuardDuty and Security Hub CSPM automatic-route email
+notifications were received. Exact inbox arrival times were not measured.
 
 ## Correlation
 
