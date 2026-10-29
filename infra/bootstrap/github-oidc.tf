@@ -21,7 +21,7 @@ resource "aws_iam_role" "github_plan" {
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          "token.actions.githubusercontent.com:sub" = "repo:SushiBear21/aws-security-response-lab:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub" = "repo:SushiBear21@348466288/aws-security-response-lab@1438825040:ref:refs/heads/main"
         }
       }
     }]
