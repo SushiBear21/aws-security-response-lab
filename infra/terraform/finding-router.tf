@@ -120,5 +120,17 @@ resource "aws_cloudwatch_event_target" "finding_router" {
   target_id = "finding-router"
   arn       = aws_lambda_function.finding_router.arn
 
-  depends_on = [aws_lambda_permission.finding_router]
+  retry_policy {
+    maximum_event_age_in_seconds = 300
+    maximum_retry_attempts       = 2
+  }
+
+  dead_letter_config {
+    arn = aws_sqs_queue.finding_delivery_failures.arn
+  }
+
+  depends_on = [
+    aws_lambda_permission.finding_router,
+    aws_sqs_queue_policy.finding_delivery_failures
+  ]
 }
