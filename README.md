@@ -1,5 +1,9 @@
 # AWS Cloud Security Detection and Response Lab
 
+> **Lab status:** Deployed lab services were torn down on October 29, 2026.
+> Evidence storage, logs, and approval records were retained.
+> Results below describe completed exercises.
+> See [cleanup results](docs/cleanup-results.md).
 A Terraform-managed AWS sandbox demonstrating security event detection,
 investigation, notification, and human-approved simulated response.
 
