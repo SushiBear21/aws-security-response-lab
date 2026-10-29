@@ -40,7 +40,8 @@ resource "aws_iam_role_policy" "github_plan_refresh" {
         Effect = "Allow"
         Action = [
           "s3:ListBucket",
-          "s3:GetAccelerateConfiguration"
+          "s3:GetAccelerateConfiguration",
+          "s3:GetReplicationConfiguration"
         ]
         Resource = "arn:aws:s3:::security-lab-evidence-359769212511-47e2f18084087725c0094ba897"
       }
