@@ -10,7 +10,6 @@ terraform {
 
 provider "aws" {
   region              = "us-east-1"
-  profile             = "portfolio-sandbox"
   allowed_account_ids = ["359769212511"]
   default_tags {
     tags = {
