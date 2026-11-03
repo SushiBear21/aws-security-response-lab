@@ -10,6 +10,30 @@ investigation, notification, and human-approved simulated response.
 Built with CloudTrail, AWS Config, EventBridge, Lambda, GuardDuty,
 Security Hub CSPM, CloudWatch, SNS, SQS, DynamoDB, and S3.
 
+## Problem and personal contribution
+
+How can a cloud security event become an investigation and a controlled response
+without turning detection into an unrestricted remediation trigger?
+
+In this personal lab, I built the Terraform infrastructure, Python detection and
+investigation paths, payload-bound approval workflow, and operational runbooks.
+The response code validates the target and current state, uses conditional
+DynamoDB transitions to claim an approval, and records uncertain execution for
+manual review. The exercise used an unattached ENI and the same administrator
+for proposal and approval; it did not validate isolation of a live workload.
+
+## Evidence to review first
+
+| Review question | Implementation or recorded evidence |
+| --- | --- |
+| What enforces the response boundary? | [Response implementation](app/response.py), [integrity tests](tests/test_response_integrity.py) |
+| What happened during approval and rollback exercises? | [Response results](docs/response-results.md) |
+| How are controls supported and qualified? | [Security controls matrix](docs/security-controls-matrix.md) |
+| What remains after teardown? | [October 29 cleanup record](docs/cleanup-results.md) |
+
+Results are author-recorded lab observations. They were not independently rerun
+for this documentation review.
+
 ## Demonstrated capabilities
 
 - Scoped CloudTrail event detection for security-group ingress changes.
@@ -154,6 +178,13 @@ It does not deploy infrastructure.
 - Automated infrastructure deployment is not implemented.
 - Actual project-attributed billing measurements remain pending.
 - This lab does not establish NIST, FedRAMP, or classified-system compliance.
+
+## Next validation
+
+Test concurrent approval claims and partial-failure reconciliation, then validate
+workload traffic isolation in a separately authorized environment. Introduce
+independent approver identities before treating this as separation of duties.
+Resolve the Security Hub query discrepancy and measure project-specific costs.
 
 ## Cost and lifecycle
 
