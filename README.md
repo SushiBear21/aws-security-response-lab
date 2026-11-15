@@ -1,5 +1,7 @@
 # AWS Cloud Security Detection and Response Lab
 
+[Portfolio overview](https://github.com/SushiBear21/agentic-security-workflow/blob/main/PORTFOLIO.md) · [Latest CI runs](https://github.com/SushiBear21/aws-security-response-lab/actions)
+
 > **Lab status:** Deployed lab services were torn down on October 29, 2026.
 > Evidence storage, logs, and approval records were retained.
 > Results below describe completed exercises.
