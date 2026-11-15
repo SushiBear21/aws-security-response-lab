@@ -200,3 +200,7 @@ bootstrap state bucket separately from the main lab.
 This is a personal sandbox using controlled configuration changes and
 synthetic security findings. It contains no production workloads or
 classified information.
+
+## November 2026 portfolio extensions
+
+See [repeatable evaluation](docs/detection-evaluation.md) for commands, measured scope and limitations.
