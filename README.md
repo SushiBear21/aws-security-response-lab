@@ -36,6 +36,15 @@ for proposal and approval; it did not validate isolation of a live workload.
 Results are author-recorded lab observations. They were not independently rerun
 for this documentation review.
 
+## Defensive endpoint workbench
+
+The [analyst runbook and demo](docs/endpoint-workbench.md) extend the lab with
+offline Windows Sysmon ingestion, SQLite SIEM queries, SOAR asset enrichment
+and case evidence, and approval-gated simulated endpoint isolation and rollback.
+The synthetic replay uses seven events to exercise a match, routine activity,
+narrow tuning, duplicate delivery, and recovery. GitHub Actions generates an
+`endpoint-workbench` JSON evidence artifact from the fixtures.
+
 ## Demonstrated capabilities
 
 - Scoped CloudTrail event detection for security-group ingress changes.

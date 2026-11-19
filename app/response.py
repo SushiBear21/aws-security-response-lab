@@ -88,6 +88,23 @@ def inspect_interface(ec2, eni_id, vpc_id):
     return sorted(group["GroupId"] for group in interface["Groups"])
 
 
+def verify_payload(item):
+    payload = json.loads(item["payload_json"])
+    if digest(payload) != item["payload_sha256"]:
+        raise ValueError("Proposal digest mismatch.")
+    return payload
+
+
+def require_approved_action(item, now, current, expected):
+    if (
+        item["state"] != "APPROVED"
+        or item.get("approved_sha256") != item["payload_sha256"]
+        or int(item["expires_at"]) <= now
+        or current != expected
+    ):
+        raise ValueError("Approval invalid, expired, or resource changed.")
+
+
 def load_proposal(table, run_id):
     item = table.get_item(
         Key={"run_id": run_id},
@@ -97,12 +114,7 @@ def load_proposal(table, run_id):
     if not item:
         raise ValueError("Proposal not found.")
 
-    payload = json.loads(item["payload_json"])
-
-    if digest(payload) != item["payload_sha256"]:
-        raise ValueError("Proposal digest mismatch.")
-
-    return item, payload
+    return item, verify_payload(item)
 
 
 def lambda_handler(event, context):
@@ -165,13 +177,7 @@ def lambda_handler(event, context):
 
     now = int(time.time())
 
-    if (
-        item["state"] != "APPROVED"
-        or item.get("approved_sha256") != item["payload_sha256"]
-        or int(item["expires_at"]) <= now
-        or current != before
-    ):
-        raise ValueError("Approval invalid, expired, or resource changed.")
+    require_approved_action(item, now, current, before)
 
     # Only one invocation can claim this approval.
     table.update_item(

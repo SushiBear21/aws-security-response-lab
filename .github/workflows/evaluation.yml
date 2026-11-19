@@ -24,3 +24,11 @@ jobs:
           name: detection-evaluation
           path: detection-evaluation.json
           retention-days: 14
+      - name: Rehearse endpoint detection and response
+        run: python -m app.endpoint_demo --output endpoint-workbench.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: endpoint-workbench
+          path: endpoint-workbench.json
+          if-no-files-found: error
+          retention-days: 14
