@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "mode": "synthetic_blueprint",
+  "organization_id": "o-example0000",
+  "regions": [
+    "us-east-1",
+    "us-west-2"
+  ],
+  "accounts": {
+    "management": "111111111111",
+    "log_archive": "222222222222",
+    "security_tooling": "333333333333",
+    "workload": "444444444444"
+  },
+  "logging": {
+    "organization_trail": true,
+    "multi_region": true,
+    "global_service_events": true,
+    "log_file_validation": true,
+    "management_events": "All",
+    "data_events": "not_in_scope",
+    "destination_account": "log_archive",
+    "bucket": {
+      "tls_required": true,
+      "public_access_blocked": false,
+      "versioning": true,
+      "object_lock": true,
+      "encryption": "NONE",
+      "source_arn_condition": true,
+      "retention_days": 90
+    }
+  },
+  "guardduty": {
+    "delegated_admin": "management",
+    "auto_enable_new_accounts": true,
+    "findings_to": "security_tooling"
+  },
+  "security_hub_cspm": {
+    "delegated_admin": "security_tooling",
+    "aggregate_findings": true,
+    "home_region": "us-east-1",
+    "standards": "review_before_enabling"
+  },
+  "aws_config": {
+    "organization_aggregator_account": "security_tooling",
+    "all_regions": true,
+    "recording_per_member_required": true,
+    "recorder_status": "design_only"
+  },
+  "iam": {
+    "cross_account_audit_role": {
+      "trusted_account": "security_tooling",
+      "external_id_required": true,
+      "allowed_actions": [
+        "s3:GetObject",
+        "cloudtrail:DescribeTrails",
+        "guardduty:GetFindings",
+        "securityhub:GetFindings",
+        "config:DescribeConfigurationRecorders",
+        "s3:*"
+      ],
+      "denied_actions": [
+        "iam:PassRole",
+        "organizations:LeaveOrganization",
+        "cloudtrail:StopLogging",
+        "s3:DeleteObject"
+      ],
+      "resource_scope": "scoped_where_service_supports",
+      "permission_boundary_required": true
+    }
+  },
+  "response": {
+    "human_approval_required": false,
+    "approval_exact_plan_digest": true,
+    "automatic_containment": false
+  },
+  "resilience": {
+    "rto_target_seconds": 60,
+    "rpo_target_max_lost_events": 1,
+    "runbook": "enterprise/docs/recovery-runbook.md"
+  },
+  "safeguards": {
+    "aws_deployment_enabled": false,
+    "allowed_cloud_spend_usd": 0,
+    "azure_in_scope": false
+  }
+}
