@@ -1,0 +1,21 @@
+{
+  "assets": {
+    "ws-alert.lab": {
+      "owner": "Lab Endpoint Operations",
+      "criticality": "medium"
+    },
+    "ws-tuned.lab": {
+      "owner": "Lab Inventory Operations",
+      "criticality": "low"
+    }
+  },
+  "suppressions": [
+    {
+      "host": "ws-tuned.lab",
+      "image": "c:\\lab\\inventoryprobe.exe",
+      "destination": "192.0.2.10",
+      "port": 443,
+      "reason": "Fixture inventory service on its expected host and destination."
+    }
+  ]
+}

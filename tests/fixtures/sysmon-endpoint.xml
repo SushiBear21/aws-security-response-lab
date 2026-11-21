@@ -1,0 +1,116 @@
+<Events>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>3</EventID>
+      <TimeCreated SystemTime="2026-11-19T10:00:30.1234567Z" />
+      <EventRecordID>102</EventRecordID>
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>WS-ALERT.LAB</Computer>
+    </System>
+    <EventData>
+      <Data Name="ProcessGuid">{00000000-0000-0000-0000-000000000001}</Data>
+      <Data Name="Image">C:\Lab\InventoryProbe.exe</Data>
+      <Data Name="Initiated">true</Data>
+      <Data Name="DestinationIp">192.0.2.44</Data>
+      <Data Name="DestinationPort">443</Data>
+      <Data Name="Protocol">tcp</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>1</EventID>
+      <TimeCreated SystemTime="2026-11-19T10:00:00.1234567Z" />
+      <EventRecordID>301</EventRecordID>
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>ws-noise.lab</Computer>
+    </System>
+    <EventData>
+      <Data Name="ProcessGuid">{00000000-0000-0000-0000-000000000003}</Data>
+      <Data Name="Image">C:\Windows\System32\curl.exe</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>3</EventID>
+      <TimeCreated SystemTime="2026-11-19T10:00:20.1234567Z" />
+      <EventRecordID>202</EventRecordID>
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>ws-tuned.lab</Computer>
+    </System>
+    <EventData>
+      <Data Name="ProcessGuid">{00000000-0000-0000-0000-000000000002}</Data>
+      <Data Name="Image">C:\Lab\InventoryProbe.exe</Data>
+      <Data Name="Initiated">true</Data>
+      <Data Name="DestinationIp">192.0.2.10</Data>
+      <Data Name="DestinationPort">443</Data>
+      <Data Name="Protocol">tcp</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>1</EventID>
+      <TimeCreated SystemTime="2026-11-19T10:00:00.1234567Z" />
+      <EventRecordID>101</EventRecordID>
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>WS-ALERT.LAB</Computer>
+    </System>
+    <EventData>
+      <Data Name="ProcessGuid">{00000000-0000-0000-0000-000000000001}</Data>
+      <Data Name="Image">C:\Lab\InventoryProbe.exe</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>3</EventID>
+      <TimeCreated SystemTime="2026-11-19T10:00:15.1234567Z" />
+      <EventRecordID>302</EventRecordID>
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>ws-noise.lab</Computer>
+    </System>
+    <EventData>
+      <Data Name="ProcessGuid">{00000000-0000-0000-0000-000000000003}</Data>
+      <Data Name="Image">C:\Windows\System32\curl.exe</Data>
+      <Data Name="Initiated">true</Data>
+      <Data Name="DestinationIp">192.0.2.44</Data>
+      <Data Name="DestinationPort">443</Data>
+      <Data Name="Protocol">tcp</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>1</EventID>
+      <TimeCreated SystemTime="2026-11-19T10:00:00.1234567Z" />
+      <EventRecordID>201</EventRecordID>
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>ws-tuned.lab</Computer>
+    </System>
+    <EventData>
+      <Data Name="ProcessGuid">{00000000-0000-0000-0000-000000000002}</Data>
+      <Data Name="Image">C:\Lab\InventoryProbe.exe</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>3</EventID>
+      <TimeCreated SystemTime="2026-11-19T10:00:42.1234567Z" />
+      <EventRecordID>103</EventRecordID>
+      <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+      <Computer>WS-ALERT.LAB</Computer>
+    </System>
+    <EventData>
+      <Data Name="ProcessGuid">{00000000-0000-0000-0000-000000000001}</Data>
+      <Data Name="Image">C:\Lab\InventoryProbe.exe</Data>
+      <Data Name="Initiated">true</Data>
+      <Data Name="DestinationIp">192.0.2.45</Data>
+      <Data Name="DestinationPort">443</Data>
+      <Data Name="Protocol">tcp</Data>
+    </EventData>
+  </Event>
+</Events>

@@ -21,6 +21,12 @@ def encode(value):
     ).encode("utf-8")
 
 
+def routing_evidence(event, finding):
+    """Canonical evidence and source-specific identity shared by lab routes."""
+    identity = f"{finding['source']}|{finding['finding_id']}"
+    return hashlib.sha256(identity.encode()).hexdigest(), encode(event), encode(finding)
+
+
 def put(client, bucket, key, body):
     client.put_object(
         Bucket=bucket,
@@ -57,19 +63,11 @@ def lambda_handler(event, context):
             finding["eventbridge_event_id"] = event.get("id")
             finding["request_id"] = context.aws_request_id
 
-            # Source-specific identity keeps the two integration paths distinct.
-            identity = (
-                finding["source"] + "|" + finding["finding_id"]
-            )
-            identity_hash = hashlib.sha256(identity.encode()).hexdigest()
-
+            identity_hash, event_bytes, finding_bytes = routing_evidence(event, finding)
             prefix = (
                 f"findings/{finding['source']}/{identity_hash}/"
                 f"attempts/{context.aws_request_id}"
             )
-
-            event_bytes = encode(event)
-            finding_bytes = encode(finding)
 
             stage = "evidence_storage"
 
