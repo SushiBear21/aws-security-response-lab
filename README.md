@@ -12,6 +12,15 @@ investigation, notification, and human-approved simulated response.
 Built with CloudTrail, AWS Config, EventBridge, Lambda, GuardDuty,
 Security Hub CSPM, CloudWatch, SNS, SQS, DynamoDB, and S3.
 
+## Objective, success criteria, and evidence
+
+**Objective.** Turn a cloud configuration change into a traceable analyst investigation, then exercise an explicitly approved simulated response and rollback.
+
+| Success criterion | Recorded result and evidence |
+| --- | --- |
+| Classify the tested public SSH scenario as high severity, distinguish the benign comparison cases, and publish a triage notification. | The recorded exercise classified public SSH as HIGH and public HTTPS and private SSH as INFO. One detection-to-SNS measurement was 3.274 seconds. [Notification and classification evidence](docs/notification-results.md) |
+| Reject disallowed approvals, reuse the result on repeat execution, and verify the baseline security group after separately approved rollback. | Rejected and expired approvals were denied, repeat execution returned `already_executed`, and the baseline group was restored on the unattached lab interface. [Response exercise](docs/response-results.md) · [Integrity tests](tests/test_response_integrity.py) |
+
 ## Problem and personal contribution
 
 How can a cloud security event become an investigation and a controlled response
